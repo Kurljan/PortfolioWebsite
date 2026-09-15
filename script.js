@@ -67,26 +67,55 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// ── Contact form ──
-function handleSubmit(e) {
+// ── Contact form (Formspree) ──
+async function handleSubmit(e) {
   e.preventDefault();
-  const btn = document.getElementById('submit-btn');
+  const form    = document.getElementById('contact-form');
+  const btn     = document.getElementById('submit-btn');
   const success = document.getElementById('form-success');
 
   btn.textContent = 'SENDING...';
+  btn.disabled    = true;
   btn.style.opacity = '0.6';
 
-  setTimeout(() => {
-    btn.textContent = 'SENT ✓';
-    success.style.display = 'block';
-    document.getElementById('contact-form').reset();
+  try {
+    const data = new FormData(form);
+    const res  = await fetch(form.action, {
+      method:  'POST',
+      body:    data,
+      headers: { 'Accept': 'application/json' }
+    });
 
-    setTimeout(() => {
+    if (res.ok) {
+      btn.textContent = 'SENT ✓';
+      success.textContent = '✓ Message sent! I\'ll get back to you soon.';
+      success.style.display = 'block';
+      form.reset();
+    } else {
+      const json = await res.json();
       btn.textContent = 'SUBMIT';
+      btn.disabled    = false;
       btn.style.opacity = '1';
-      success.style.display = 'none';
-    }, 4000);
-  }, 1200);
+      success.textContent = '✗ Oops — ' + (json.error || 'something went wrong. Try emailing me directly.');
+      success.style.display = 'block';
+      success.style.color   = '#c0392b';
+    }
+  } catch (err) {
+    btn.textContent = 'SUBMIT';
+    btn.disabled    = false;
+    btn.style.opacity = '1';
+    success.textContent = '✗ Network error. Please email me at sumontaokerljan@gmail.com';
+    success.style.display = 'block';
+    success.style.color   = '#c0392b';
+  }
+
+  setTimeout(() => {
+    success.style.display = 'none';
+    success.style.color   = '';
+    btn.textContent       = 'SUBMIT';
+    btn.disabled          = false;
+    btn.style.opacity     = '1';
+  }, 5000);
 }
 
 // ── Scroll-in animation ──

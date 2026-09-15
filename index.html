@@ -14,6 +14,9 @@
 
   <!-- ══════════ TOP NAV ══════════ -->
   <nav id="top-nav" class="top-nav">
+    <a href="#hero" class="nav-logo-link" id="nav-logo" aria-label="Home">
+      <img src="logo.svg" alt="Kurljan Logo" class="nav-logo-img nav-logo-inverted" />
+    </a>
     <ul class="nav-links">
       <li><a href="#about" id="nav-about">About me</a></li>
       <li><a href="#skills" id="nav-skills">Skills</a></li>
@@ -27,14 +30,16 @@
     <!-- LEFT — light side -->
     <div class="hero-left">
       <div class="hero-logo">
-        <a href="#hero" class="logo-monogram">KJ</a>
+        <a href="#hero" class="logo-monogram">
+          <img src="logo.svg" alt="Kurljan Logo" class="nav-logo-img" />
+        </a>
       </div>
       <div class="hero-content">
         <p class="hero-greeting">Hi, <span class="accent">I am</span></p>
         <h1 class="hero-name">Kerl Jan<br/>Sumontao</h1>
         <p class="hero-title">Game Developer / AI Explorer</p>
         <div class="hero-socials">
-          <a href="mailto:kerljan@gmail.com" class="social-icon" id="social-email" aria-label="Email">
+          <a href="mailto:sumontaokerljan@gmail.com" class="social-icon" id="social-email" aria-label="Email">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
           </a>
           <a href="https://github.com/kurljan" target="_blank" class="social-icon" id="social-github" aria-label="GitHub">
@@ -293,13 +298,27 @@
       <p class="section-bio">
         Have an idea? Want to collaborate on something great?<br/>Let's connect and build something that matters.
       </p>
+      <div class="contact-info-strip">
+        <a href="mailto:sumontaokerljan@gmail.com" class="contact-info-item" id="contact-email-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+          sumontaokerljan@gmail.com
+        </a>
+        <a href="tel:+639295823370" class="contact-info-item" id="contact-phone-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .99h3a2 2 0 012 1.72c.13.96.36 1.9.69 2.81a2 2 0 01-.45 2.11L6.09 8.78a16 16 0 006.13 6.13l1.15-1.15a2 2 0 012.11-.45c.91.33 1.85.56 2.81.69A2 2 0 0122 16.92z"/></svg>
+          09295823370
+        </a>
+      </div>
+
       <div class="divider">
         <span class="divider-line"></span>
         <span class="divider-icon">&#10096;&#10096;&#10096;</span>
         <span class="divider-line"></span>
       </div>
 
-      <form class="contact-form" id="contact-form" onsubmit="handleSubmit(event)">
+      <form class="contact-form" id="contact-form"
+            action="https://formspree.io/f/YOUR_FORM_ID"
+            method="POST"
+            onsubmit="handleSubmit(event)">
         <div class="form-field">
           <input type="text" id="input-name" name="name" placeholder="ENTER YOUR NAME*" required />
           <span class="form-line"></span>
@@ -337,7 +356,7 @@
       <a href="https://github.com/kurljan" target="_blank" class="footer-icon" id="footer-github" aria-label="GitHub">
         <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
       </a>
-      <a href="mailto:kerljan@gmail.com" class="footer-icon" id="footer-email" aria-label="Email">
+      <a href="mailto:sumontaokerljan@gmail.com" class="footer-icon" id="footer-email" aria-label="Email">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
       </a>
     </div>
