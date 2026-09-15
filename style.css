@@ -108,13 +108,24 @@ img { display: block; }
   margin-bottom: auto;
 }
 
-.logo-img {
-  width: 54px;
-  height: 54px;
-  object-fit: contain;
-  display: block;
-  /* SVG has no background — shows on light gray cleanly */
-  filter: invert(0);
+.logo-monogram {
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--black);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.logo-monogram:hover {
+  background: var(--black);
+  color: var(--white);
 }
 
 .hero-content {
@@ -179,7 +190,7 @@ img { display: block; }
   background: var(--black);
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 3rem 0 5rem;
+  justify-content: center;
   margin-left: -5%;
   position: relative;
   overflow: hidden;
@@ -224,25 +235,24 @@ img { display: block; }
   color: var(--black);
 }
 
-/* Hero SVG (replaces photo) */
+/* Hero SVG (photo as SVG — no filter, natural colors) */
 .hero-svg-wrap {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 2rem 3rem;
+  padding: 2rem;
   overflow: hidden;
 }
 
 .hero-svg {
-  width: 75%;
-  max-width: 420px;
+  width: 70%;
+  max-width: 400px;
   height: auto;
   object-fit: contain;
-  /* Invert to white so it shows on the black background */
-  filter: invert(1);
-  opacity: 0.92;
-  animation: floatSvg 4s ease-in-out infinite;
+  /* NO invert — show the photo naturally */
+  opacity: 0.95;
+  animation: floatSvg 5s ease-in-out infinite;
 }
 
 @keyframes floatSvg {
