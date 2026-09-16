@@ -526,13 +526,12 @@ img {
 
 .portfolio-header {
   position: relative;
-  height: 200px;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-    url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80') center/cover no-repeat;
+  height: 100px;
+  background: var(--black);
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid #222;
 }
 
 .portfolio-body {
@@ -603,25 +602,25 @@ img {
   transition: transform 0.4s ease;
 }
 
-/* Unique gradient backgrounds for each project */
+/* Monochromatic dark backgrounds for each project */
 .portfolio-thumb-1 {
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a, #1e1e1e);
 }
 
 .portfolio-thumb-2 {
-  background: linear-gradient(135deg, #1a0533, #4a0080, #6600cc);
+  background: linear-gradient(135deg, #222222, #303030, #222222);
 }
 
 .portfolio-thumb-3 {
-  background: linear-gradient(135deg, #0d0d0d, #1a0000, #330000);
+  background: linear-gradient(135deg, #111111, #1f1f1f, #161616);
 }
 
 .portfolio-thumb-4 {
-  background: linear-gradient(135deg, #1b2838, #2a475e, #1b2838);
+  background: linear-gradient(135deg, #1c1c1c, #282828, #1c1c1c);
 }
 
 .portfolio-thumb-5 {
-  background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, #171717, #252525, #1a1a1a);
 }
 
 .portfolio-thumb-6 {
@@ -635,42 +634,37 @@ img {
 .portfolio-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.78);
+  background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 55%, transparent 100%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.portfolio-item:hover .portfolio-overlay {
+  align-items: flex-start;
+  justify-content: flex-end;
   opacity: 1;
+  padding: 1.2rem 1.4rem;
+  text-align: left;
 }
 
 .portfolio-tag {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.25rem;
   letter-spacing: 0.05em;
 }
 
 .portfolio-item-title {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--white);
   letter-spacing: 0.08em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .portfolio-item-desc {
-  font-size: 0.68rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1rem;
+  font-size: 0.63rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.7rem;
   font-weight: 300;
 }
 
