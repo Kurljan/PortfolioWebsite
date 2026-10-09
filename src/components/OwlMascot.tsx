@@ -37,7 +37,7 @@ export default function OwlMascot({ defaultState = "idle" }: { defaultState?: Ow
 
   const bodyVariants = {
     idle: { y: [0, -2, 0], transition: { repeat: Infinity, duration: 2 } },
-    alert: { y: -10, transition: { type: "spring", stiffness: 300 } },
+    alert: { y: -10, transition: { type: "spring" as const, stiffness: 300 } },
     celebrate: { y: [0, -15, 0], transition: { repeat: Infinity, duration: 0.4 } },
     sleepy: { y: 2 },
     thinking: { rotate: [0, -5, 5, 0], transition: { repeat: Infinity, duration: 2 } }

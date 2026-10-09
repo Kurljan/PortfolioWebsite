@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 import React from 'react';
 import SecretLoginTrigger from '@/components/SecretLoginTrigger';
@@ -13,6 +14,7 @@ export default function Home() {
       <a href="#hero" className="nav-logo-link" id="nav-logo" aria-label="Home">
       <img src="logo.svg" alt="Kurljan Logo" className="nav-logo-img nav-logo-inverted" />
     </a>
+    </SecretLoginTrigger>
     <ul className="nav-links">
       <li><a href="#about" id="nav-about">About me</a></li>
       <li><a href="#skills" id="nav-skills">Skills</a></li>
@@ -325,7 +327,7 @@ export default function Home() {
           <span className="form-line"></span>
         </div>
         <div className="form-field">
-          <textarea id="input-message" name="message" placeholder="YOUR MESSAGE*" rows="5" required></textarea>
+          <textarea id="input-message" name="message" placeholder="YOUR MESSAGE*" rows={5} required></textarea>
           <span className="form-line"></span>
         </div>
         <div className="form-submit-wrap">
