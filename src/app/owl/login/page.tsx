@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import ClientLogin from "./ClientLogin";
 
 export const metadata: Metadata = {
@@ -11,11 +12,16 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-brand-gray-bg)]">
-      <div className="bg-[var(--color-brand-white)] p-12 drop-shadow-2xl border border-[var(--color-brand-gray-light)] text-center max-w-sm w-full relative overflow-hidden">
-        <h1 className="text-2xl font-bold tracking-[0.2em] mb-2">OWL</h1>
-        <p className="text-xs tracking-[0.1em] text-gray-500 mb-8 italic">Restricted Access</p>
-        <ClientLogin />
+    <div className="crt min-h-screen flex items-center justify-center bg-os-bg font-mono selection:bg-os-text selection:text-os-bg text-os-text p-4">
+      <div className="border-2 border-os-border bg-os-bg p-8 shadow-[8px_8px_0_0_var(--os-text)] max-w-md w-full relative overflow-hidden">
+        <div className="border-b-2 border-os-border bg-os-header px-3 py-1 mb-6 flex justify-between items-center -mx-8 -mt-8">
+          <span className="font-bold uppercase tracking-widest text-xs">login.sys</span>
+        </div>
+        <h1 className="text-3xl font-black uppercase tracking-tight mb-1">&gt; OWL_AUTH</h1>
+        <p className="text-xs tracking-[0.1em] opacity-70 mb-8">System Restricted Access.</p>
+        <Suspense fallback={<div className="text-sm animate-pulse">Initializing...</div>}>
+          <ClientLogin />
+        </Suspense>
       </div>
     </div>
   );

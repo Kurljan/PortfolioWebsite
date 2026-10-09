@@ -1,98 +1,136 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 
-export type OwlState = "idle" | "alert" | "celebrate" | "sleepy" | "thinking";
+import { useState, useEffect } from "react";
+import { motion, useAnimation, Variants, AnimatePresence } from "framer-motion";
+import SecretLoginTrigger from "./SecretLoginTrigger";
+import { useRetroSound } from "@/hooks/useRetroSound";
 
-export default function OwlMascot({ defaultState = "idle" }: { defaultState?: OwlState }) {
-  const [state, setState] = useState<OwlState>(defaultState);
+export default function OwlMascot() {
+  const [owlState, setOwlState] = useState<"idle" | "alert" | "sleepy" | "thinking">("idle");
+  const [isLoading, setIsLoading] = useState(true);
+  const controls = useAnimation();
+  const { playSound } = useRetroSound();
 
-  // Time-based sleepy logic
   useEffect(() => {
-    const checkTime = () => {
-      const hour = new Date().getHours();
-      if (hour >= 23 || hour < 5) setState("sleepy");
-      else setState(defaultState);
-    };
-    checkTime();
-    const interval = setInterval(checkTime, 60000);
-    return () => clearInterval(interval);
-  }, [defaultState]);
+    // Basic time-based logic to make the owl sleepy at night
+    const hour = new Date().getHours();
+    if (hour >= 23 || hour <= 5) {
+      setOwlState("sleepy");
+    }
 
-  const eyeVariants = {
-    idle: { scaleY: [1, 0.1, 1], transition: { repeat: Infinity, repeatDelay: 4, duration: 0.2 } },
-    alert: { scaleY: 1.2, scaleX: 1.2 },
-    celebrate: { scaleY: [1, 0.5, 1], transition: { repeat: Infinity, duration: 0.3 } },
-    sleepy: { scaleY: 0.3 },
-    thinking: { y: [-2, 2, -2], transition: { repeat: Infinity, duration: 1.5 } }
+    // Play boot sound and clear loading after 2.5 seconds
+    playSound("boot");
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [playSound]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      controls.start(owlState);
+    }
+  }, [owlState, controls, isLoading]);
+
+  // Framer Motion Variants for the Owl
+  const bodyVariants: Variants = {
+    idle: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 3, ease: "easeInOut" } },
+    alert: { y: -8, scale: 1.05, transition: { type: "spring", stiffness: 300 } },
+    sleepy: { y: 2, scale: 0.95, transition: { duration: 1 } },
+    thinking: { rotate: [0, -5, 5, 0], transition: { repeat: Infinity, duration: 2, ease: "easeInOut" } }
   };
 
-  const wingVariants = {
-    idle: { rotate: 0 },
-    alert: { rotate: -10 },
-    celebrate: { rotate: [-20, 20, -20], transition: { repeat: Infinity, duration: 0.4 } },
-    sleepy: { rotate: 5 },
-    thinking: { rotate: 0 }
-  };
-
-  const bodyVariants = {
-    idle: { y: [0, -2, 0], transition: { repeat: Infinity, duration: 2 } },
-    alert: { y: -10, transition: { type: "spring" as const, stiffness: 300 } },
-    celebrate: { y: [0, -15, 0], transition: { repeat: Infinity, duration: 0.4 } },
-    sleepy: { y: 2 },
-    thinking: { rotate: [0, -5, 5, 0], transition: { repeat: Infinity, duration: 2 } }
+  const eyeVariants: Variants = {
+    idle: { scaleY: [1, 1, 0.1, 1], transition: { repeat: Infinity, duration: 4, times: [0, 0.95, 0.97, 1] } },
+    alert: { scaleY: 1.2, transition: { type: "spring" } },
+    sleepy: { scaleY: 0.3, transition: { duration: 0.5 } },
+    thinking: { scaleY: 0.8, x: [0, 2, -2, 0], transition: { repeat: Infinity, duration: 2 } }
   };
 
   return (
-    <motion.div
-      drag
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      dragElastic={1}
-      whileDrag={{ scale: 1.1, cursor: "grabbing" }}
-      className="fixed bottom-6 right-6 w-24 h-24 z-50 cursor-grab drop-shadow-xl"
-      onClick={() => setState(s => (s === "idle" ? "alert" : "idle"))}
-    >
-      <motion.svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
-        variants={bodyVariants}
-        animate={state}
-        className="w-full h-full text-brand-black"
+    <>
+      {/* Full screen loading background that fades out */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="fixed inset-0 bg-os-bg z-40 crt pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+      
+      <motion.div
+        layout
+        initial={false}
+        drag={!isLoading}
+        dragConstraints={{ top: -500, bottom: 50, left: -500, right: 50 }}
+        whileHover={!isLoading ? { scale: 1.1 } : undefined}
+        whileTap={!isLoading ? { scale: 0.9 } : undefined}
+        className={`fixed z-50 flex flex-col items-center justify-center drop-shadow-2xl ${
+          isLoading 
+            ? "inset-0 m-auto w-64 h-64" 
+            : "bottom-6 right-6 w-16 h-16 cursor-grab active:cursor-grabbing"
+        }`}
+        onClick={() => {
+          if (!isLoading) {
+            playSound("click");
+            setOwlState(prev => (prev === "alert" ? "idle" : "alert"));
+          }
+        }}
       >
-        {/* Body */}
-        <path d="M20 45 C 20 20, 80 20, 80 45 C 80 80, 70 90, 50 90 C 30 90, 20 80, 20 45 Z" fill="currentColor" />
+        <SecretLoginTrigger>
+          <motion.svg
+            variants={bodyVariants}
+            initial="idle"
+            animate={controls}
+            viewBox="0 0 100 100"
+            className="w-full h-full text-os-text"
+          >
+            {/* Owl Body - Retro Amber outline/fill */}
+            <path 
+              d="M 20 80 C 20 40, 80 40, 80 80 Z" 
+              fill="var(--os-bg)"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            {/* Owl Ears */}
+            <path 
+              d="M 25 50 L 15 25 L 35 40 Z M 75 50 L 85 25 L 65 40 Z" 
+              fill="var(--os-bg)"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            
+            {/* Glowing Eyes Container */}
+            <motion.g variants={eyeVariants} initial="idle" animate={controls}>
+              {/* Left Eye */}
+              <circle cx="35" cy="55" r="8" fill="var(--os-bg)" stroke="currentColor" strokeWidth="2" />
+              <circle cx="35" cy="55" r="3" fill="currentColor" />
+              {/* Right Eye */}
+              <circle cx="65" cy="55" r="8" fill="var(--os-bg)" stroke="currentColor" strokeWidth="2" />
+              <circle cx="65" cy="55" r="3" fill="currentColor" />
+            </motion.g>
+
+            {/* Minimal Beak */}
+            <path d="M 47 62 L 53 62 L 50 68 Z" fill="currentColor" />
+          </motion.svg>
+        </SecretLoginTrigger>
         
-        {/* Belly */}
-        <path d="M35 55 C 35 45, 65 45, 65 55 C 65 75, 55 85, 50 85 C 45 85, 35 75, 35 55 Z" fill="var(--color-brand-gray-light)" />
-        
-        {/* Left Wing */}
-        <motion.path 
-          variants={wingVariants} 
-          style={{ transformOrigin: "20px 45px" }}
-          d="M20 45 Q 10 55 15 70 Q 25 70 25 55 Z" 
-          fill="var(--color-brand-gray-mid)" 
-        />
-        {/* Right Wing */}
-        <motion.path 
-          variants={wingVariants} 
-          style={{ transformOrigin: "80px 45px" }}
-          d="M80 45 Q 90 55 85 70 Q 75 70 75 55 Z" 
-          fill="var(--color-brand-gray-mid)" 
-        />
-
-        {/* Beak */}
-        <path d="M47 50 L 53 50 L 50 56 Z" fill="var(--color-brand-white)" />
-
-        {/* Eyes Background */}
-        <circle cx="37" cy="40" r="8" fill="var(--color-brand-white)" />
-        <circle cx="63" cy="40" r="8" fill="var(--color-brand-white)" />
-
-        {/* Pupils */}
-        <motion.g variants={eyeVariants} style={{ transformOrigin: "37px 40px" }}>
-          <circle cx="37" cy="40" r="3.5" fill="currentColor" />
-        </motion.g>
-        <motion.g variants={eyeVariants} style={{ transformOrigin: "63px 40px" }}>
-          <circle cx="63" cy="40" r="3.5" fill="currentColor" />
-        </motion.g>
-      </motion.svg>
-    </motion.div>
+        {isLoading && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 text-os-text font-mono text-xl uppercase tracking-widest font-bold animate-pulse"
+          >
+            &gt; Booting OWL-OS...
+          </motion.div>
+        )}
+      </motion.div>
+    </>
   );
 }
