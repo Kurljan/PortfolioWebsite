@@ -2,13 +2,14 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import { 
-  createQuickTask, markTaskDone, rescheduleTask, 
+  createQuickTask, markTaskDone, rescheduleTask, deleteTask,
   saveNote, addHabit, deleteHabit, updateProfile 
 } from "./actions";
 import { db } from "@/db";
 import { tasks, users, habits, notes } from "@/db/schema";
 import { eq, desc, and, gte } from "drizzle-orm";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import ConfirmForm from "@/components/ConfirmForm";
 
 export const metadata: Metadata = {
   title: "Owl Command Center",
@@ -39,11 +40,9 @@ export default async function OwlDashboard() {
     if (userRecord) {
       userName = userRecord.name || userName;
       
-      // 1. Priorities (limit 3)
       userTasks = await db.query.tasks.findMany({
         where: and(eq(tasks.userId, userRecord.id), eq(tasks.status, "todo")),
-        orderBy: [desc(tasks.createdAt)],
-        limit: 3
+        orderBy: [desc(tasks.createdAt)]
       });
 
       // 2. Needs Reschedule
@@ -168,38 +167,44 @@ export default async function OwlDashboard() {
               )}
             </section>
 
-            {/* PRIORITIES */}
+            {/* ACTIVE TASKS */}
             <section className="bg-os-bg p-4 md:p-6 shadow-[0_0_15px_rgba(255,176,0,0.1)] border border-os-text/30 relative">
               <h2 className="text-sm font-bold tracking-widest mb-6 text-os-text border-b border-os-text/30 pb-2 flex justify-between">
-                <span>&gt; TODAY'S_PRIORITIES</span>
-                <span className="opacity-50">[{userTasks.length}/3]</span>
+                <span>&gt; ACTIVE_TASKS.exe</span>
+                <span className="opacity-50">[{userTasks.length} TASKS]</span>
               </h2>
               
               {userTasks.length > 0 ? (
-                <ul className="space-y-4">
+                <ul className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                   {userTasks.map((task, idx) => (
                     <li key={task.id} className="flex flex-col gap-2 p-3 border border-os-text/20 hover:border-os-text/60 transition-colors group">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <form action={markTaskDone}>
+                          <ConfirmForm action={markTaskDone} confirmMessage="Mark this task as completed?">
                             <input type="hidden" name="taskId" value={task.id} />
-                            <button type="submit" className="w-6 h-6 border-2 border-os-text flex items-center justify-center shrink-0 transition-colors hover:bg-os-text group-hover:border-os-text">
+                            <button type="submit" className="w-6 h-6 border-2 border-os-text flex items-center justify-center shrink-0 transition-colors hover:bg-os-text group-hover:border-os-text" title="Complete Task">
                               <span className="opacity-0 group-hover:opacity-100 hover:text-os-bg font-bold">✓</span>
                             </button>
-                          </form>
+                          </ConfirmForm>
                           <span className="text-lg font-semibold">{task.title}</span>
                         </div>
-                        <span className="text-xs opacity-50">PRIORITY_{idx + 1}</span>
+                        
+                        <div className="flex items-center gap-4">
+                          <span className="text-xs opacity-50 hidden sm:block">PRIORITY_{idx + 1}</span>
+                          <ConfirmForm action={deleteTask} confirmMessage={`Are you sure you want to permanently delete '${task.title}'?`}>
+                            <input type="hidden" name="taskId" value={task.id} />
+                            <button type="submit" className="text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:underline" title="Delete Task">
+                              [DEL]
+                            </button>
+                          </ConfirmForm>
+                        </div>
                       </div>
-                      {task.estimatedMinutes && (
-                        <div className="text-xs opacity-70 pl-10">EST: {task.estimatedMinutes}m</div>
-                      )}
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="text-os-text/60 italic text-sm py-4 border border-dashed border-os-text/30 px-4 text-center">
-                  No priorities set. System idling...
+                  No active tasks found. System idling...
                 </div>
               )}
             </section>
@@ -246,11 +251,13 @@ export default async function OwlDashboard() {
                   <input 
                     type="time" 
                     name="time"
+                    style={{ colorScheme: "dark" }}
                     className="flex-1 border-b-2 border-os-text/50 bg-os-text/5 py-2 px-2 outline-none text-xs focus:border-os-text text-os-text/70 w-full"
                   />
                   <input 
                     type="date" 
                     name="date"
+                    style={{ colorScheme: "dark" }}
                     className="flex-1 border-b-2 border-os-text/50 bg-os-text/5 py-2 px-2 outline-none text-xs focus:border-os-text text-os-text/70 w-full"
                   />
                 </div>
@@ -288,11 +295,11 @@ export default async function OwlDashboard() {
                   {needsReschedule.map(task => (
                     <li key={task.id} className="text-sm flex flex-col gap-1 border-l-2 border-os-text pl-3 py-1">
                       <span className="opacity-90">{task.title}</span>
-                      <form action={rescheduleTask} className="flex gap-2 mt-1">
+                      <ConfirmForm action={rescheduleTask} confirmMessage="Reschedule this task?" className="flex gap-2 mt-1">
                         <input type="hidden" name="taskId" value={task.id} />
                         <button type="submit" name="when" value="today" className="text-[10px] bg-os-text/10 px-2 py-1 hover:bg-os-text/20">TODAY</button>
                         <button type="submit" name="when" value="tomorrow" className="text-[10px] bg-os-text/10 px-2 py-1 hover:bg-os-text/20">TOMORROW</button>
-                      </form>
+                      </ConfirmForm>
                     </li>
                   ))}
                 </ul>
@@ -316,10 +323,10 @@ export default async function OwlDashboard() {
                         </button>
                         <span className="text-sm">{habit.title}</span>
                       </div>
-                      <form action={deleteHabit}>
+                      <ConfirmForm action={deleteHabit} confirmMessage={`Delete habit '${habit.title}'?`}>
                         <input type="hidden" name="habitId" value={habit.id} />
                         <button type="submit" className="text-xs opacity-0 group-hover:opacity-100 hover:text-red-500">x</button>
-                      </form>
+                      </ConfirmForm>
                     </li>
                   ))}
                 </ul>

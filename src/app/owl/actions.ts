@@ -125,6 +125,18 @@ export async function markTaskDone(formData: FormData) {
   revalidatePath("/owl");
 }
 
+export async function deleteTask(formData: FormData) {
+  const user = await getUser();
+  if (!user) throw new Error("Unauthorized");
+  const taskId = formData.get("taskId") as string;
+  if (!taskId) return;
+
+  await db.delete(tasks)
+    .where(and(eq(tasks.id, taskId), eq(tasks.userId, user.id)));
+  
+  revalidatePath("/owl");
+}
+
 export async function rescheduleTask(formData: FormData) {
   const user = await getUser();
   if (!user) throw new Error("Unauthorized");
