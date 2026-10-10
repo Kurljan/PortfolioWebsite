@@ -28,15 +28,29 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      authorization: {
+        params: {
+          scope: "openid email profile https://www.googleapis.com/auth/calendar https://mail.google.com/",
+        },
+      },
     }),
   ],
   callbacks: {
-    async jwt({ token }) {
+    async jwt({ token, account }) {
+      // Persist the OAuth access token to the JWT so we can use it later
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
       return token;
     },
-    async session({ session }) {
+    async session({ session, token }) {
+      // Make the access token available on the client side via session
+      if (token?.accessToken) {
+        // @ts-ignore – we add a custom field
+        session.accessToken = token.accessToken;
+      }
       return session;
     },
   },
