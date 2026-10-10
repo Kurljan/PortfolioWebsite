@@ -33,27 +33,37 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       authorization: {
         params: {
-          scope:
-            "openid email profile https://www.googleapis.com/auth/calendar https://mail.google.com/",
-        },
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+          scope: "openid email profile https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/gmail.send"
+        }
       },
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials") return true;
+      // ONLY allow the specific OWNER_EMAIL for Google provider
+      const ownerEmail = process.env.OWNER_EMAIL;
+      if (ownerEmail && user.email === ownerEmail) {
+        return true;
+      }
+      return false; // Reject everyone else
+    },
     async jwt({ token, account }) {
-      // Persist the OAuth access token to the JWT so we can use it later
-      if (account?.access_token) {
+      if (account) {
         token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token; // Store encrypted securely
       }
       return token;
     },
     async session({ session, token }) {
-      // Make the access token available via session
-      if (token?.accessToken) {
+      if (token) {
         (session as any).accessToken = token.accessToken;
       }
       return session;
-    },
+    }
   },
   pages: {
     signIn: "/owl/login",
