@@ -11,17 +11,18 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const validUsername = process.env.OWNER_USERNAME;
-        const validPassword = process.env.OWNER_PASSWORD;
+        const validUsername = process.env.OWNER_USERNAME ?? "";
+        const validPassword = process.env.OWNER_PASSWORD ?? "";
 
         if (
           credentials?.username === validUsername &&
-          credentials?.password === validPassword
+          credentials?.password === validPassword &&
+          validUsername !== ""
         ) {
           return {
             id: "1",
             name: validUsername,
-            email: process.env.OWNER_EMAIL || "owner@localhost",
+            email: process.env.OWNER_EMAIL ?? "owner@localhost",
           };
         }
         return null;
@@ -32,7 +33,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       authorization: {
         params: {
-          scope: "openid email profile https://www.googleapis.com/auth/calendar https://mail.google.com/",
+          scope:
+            "openid email profile https://www.googleapis.com/auth/calendar https://mail.google.com/",
         },
       },
     }),
@@ -46,10 +48,9 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Make the access token available on the client side via session
+      // Make the access token available via session
       if (token?.accessToken) {
-        // @ts-ignore – we add a custom field
-        session.accessToken = token.accessToken;
+        (session as any).accessToken = token.accessToken;
       }
       return session;
     },
@@ -60,5 +61,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-export const GET = NextAuth(authOptions);
-export const POST = GET;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handler = NextAuth(authOptions) as any;
+export { handler as GET, handler as POST };
