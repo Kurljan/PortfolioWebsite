@@ -138,7 +138,25 @@ export default function ClientLogin() {
         className="w-full border-2 border-os-border py-3 text-xs font-bold tracking-[0.2em] transition-colors hover:bg-os-text hover:text-os-bg uppercase flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed mt-2"
       >
         <span className="group-hover:animate-pulse">&gt;</span>{" "}
-        {loading ? "AUTHENTICATING..." : "AUTHENTICATE"}
+        {loading ? "AUTHENTICATING..." : "AUTHENTICATE VIA CREDENTIALS"}
+      </button>
+
+      <div className="flex items-center gap-4 my-2 opacity-50">
+        <div className="flex-1 h-px bg-os-border"></div>
+        <span className="text-[10px] tracking-widest uppercase">OR</span>
+        <div className="flex-1 h-px bg-os-border"></div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          playSound("click");
+          signIn("google", { callbackUrl: "/owl" });
+        }}
+        onMouseEnter={() => playSound("hover")}
+        className="w-full border-2 border-os-border py-3 text-xs font-bold tracking-[0.2em] transition-colors hover:bg-os-text hover:text-os-bg uppercase flex items-center justify-center gap-2 group"
+      >
+        <span className="group-hover:animate-pulse">&gt;</span> AUTHENTICATE VIA GOOGLE
       </button>
     </motion.form>
   );
