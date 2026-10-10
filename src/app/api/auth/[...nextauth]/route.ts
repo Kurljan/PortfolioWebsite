@@ -1,41 +1,39 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-          scope: "openid email profile https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/gmail.send"
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const validUsername = process.env.OWNER_USERNAME;
+        const validPassword = process.env.OWNER_PASSWORD;
+
+        if (
+          credentials?.username === validUsername &&
+          credentials?.password === validPassword
+        ) {
+          return {
+            id: "1",
+            name: validUsername,
+            email: process.env.OWNER_EMAIL || "owner@localhost",
+          };
         }
-      }
+        return null;
+      },
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
-      // ONLY allow the specific OWNER_EMAIL
-      const ownerEmail = process.env.OWNER_EMAIL;
-      if (ownerEmail && user.email === ownerEmail) {
-        return true;
-      }
-      return false; // Reject everyone else
-    },
-    async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token; // Store encrypted securely
-      }
+    async jwt({ token }) {
       return token;
     },
-    async session({ session, token }) {
-      (session as any).accessToken = token.accessToken;
+    async session({ session }) {
       return session;
-    }
+    },
   },
   pages: {
     signIn: "/owl/login",
