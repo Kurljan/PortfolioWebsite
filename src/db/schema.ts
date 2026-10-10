@@ -41,3 +41,29 @@ export const reminders = pgTable("reminders", {
   status: text("status").default("pending").notNull(), // pending, sent, cancelled
   message: text("message").notNull(),
 });
+
+export const habits = pgTable("habits", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  areaId: uuid("area_id").references(() => areas.id),
+  title: text("title").notNull(),
+  frequency: text("frequency").default("daily").notNull(), // daily, weekly
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const habitLogs = pgTable("habit_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  habitId: uuid("habit_id").references(() => habits.id).notNull(),
+  completedAt: timestamp("completed_at").defaultNow().notNull(),
+});
+
+export const notes = pgTable("notes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  areaId: uuid("area_id").references(() => areas.id),
+  title: text("title"),
+  content: text("content"), // markdown
+  isPinned: boolean("is_pinned").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
