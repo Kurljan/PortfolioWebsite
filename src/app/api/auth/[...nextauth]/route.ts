@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: "1",
             name: validUsername,
-            email: process.env.OWNER_EMAIL ?? "owner@localhost",
+            email: process.env.OWNER_EMAIL ?? "",
           };
         }
         return null;
